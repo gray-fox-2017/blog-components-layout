@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-2 col-md-offset-2">
+            <h3>Article List</h3>
+            <article-list v-for="article in articles" v-bind:contents="article" v-bind:key="article._id" v-on:get-main="getMain(article)"></article-list>
+          </div>
+          <div class="col-md-8">
+            <article-content v-bind:content="main"></article-content>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var app = new Vue({
+        el: "#app",
+        data: {
+          articles: [],
+          main: {}
+        },
+        methods: {
+          populateArticle: function() {
+            var self = this;
+            axios.get(`http://localhost:3000/api/articles`)
+            .then((response) => {
+              self.articles = response.data;
+            })
+          },
+          getMain: function(article) {
+            app.main = article;
+            console.log(article.title)
+          }
+        },
+        created () {
+          this.populateArticle();
+        }
+      })
+      Vue.component('article-list', {
+        template: `
+          <a href="#" v-on:click="getMain"> {{ contents.title }} </a>
+        `,
+        props: ['contents'],
+        methods: {
+          getMain: function() {
+            this.$emit('get-main')
+          }
+        }
+      })
+      Vue.component('article-content', {
+        template: `
+          <div v-if="content.title">
+            <h3>{{ content.title }}</h3>
+            <p>{{ content.article_content }}</p>
+          </div>
+          <h3 v-else>Welcome</h3>
+        `,
+        props: ['content']
+      })
+
+    </script>
+  </body>
+</html>
