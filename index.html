@@ -31,9 +31,9 @@
 		<div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="#">Home<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home"></span></a></li>
-        <li><a href="#" v-if="localStorage.getItem('token') === null" data-toggle="modal" data-target="#login-modal">Login<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-share-send"></span></a></li>
-        <li ><a href="#" vi-if="localStorage.getItem('token') !== null">Logout<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-remove"></span></a></li>
-				<li ><a href="#">Profile<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li>
+        <li><a href="#" v-if="localStorage.getItem('token') === null" data-toggle="modal" data-target="#login-modal">Login / SignUp<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-ok"></span></a></li>
+        <li ><a href="#" v-if="localStorage.getItem('token') !== null">Logout<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-remove"></span></a></li>
+				<li ><a href="#" v-if="localStorage.getItem('token') !== null">Profile<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li>
 				<!-- <li ><a href="#">Messages<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-envelope"></span></a></li>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>
@@ -66,17 +66,32 @@
 				<div class="loginmodal-container">
 					<h1>Login to Your Account</h1><br>
 				  <form>
-					<input type="text" name="user" placeholder="Username">
-					<input type="password" name="pass" placeholder="Password">
-					<input type="submit" name="login" class="login loginmodal-submit" value="Login">
-				  </form>
-					
+					<input type="text" v-model="username" placeholder="Username">
+					<input type="password" v-model="password" placeholder="Password">
+					<input type="submit" v-on:click="login()" class="login loginmodal-submit" value="Login">
+				  </form>					
 				  <div class="login-help">
-					<a href="#">Register</a>
+					<a href="#" data-toggle="modal" data-target="#signup-modal">Register</a>
 				  </div>
 				</div>
 			</div>
 		  </div>
+  
+  <div class="modal fade" id="signup-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+      	  <div class="modal-dialog">
+  				<div class="loginmodal-container">
+  					<h1>Sign Up</h1><br>
+  				  <form>
+  					<input type="text" v-model="username" placeholder="Username">
+  					<input type="password" v-model="password" placeholder="Password">
+            <input type="email" v-model="email" placeholder="Email">
+  					<input type="submit" v-on:click="signup()" class="login loginmodal-submit" value="Sign Up">
+  				  </form>					
+  				  <div class="login-help">
+  				  </div>
+  				</div>
+  			</div>
+  		  </div>
       <!-- end of modal -->
       <div id="blog">
         <simple-counter :blogs='title'></simple-counter>
@@ -94,11 +109,6 @@
         </form>      
       </div>
     </div>
-    <script type="text/javascript">
-    $(window).on('load',function(){
-        $('#login-modal').modal('show');
-    });
-    </script>
     <script type="text/javascript">
     function htmlbodyHeightUpdate(){
       var height3 = $( window ).height()
@@ -142,7 +152,10 @@
     data:{
       blogs: [],
       blog: "",
-      title: ""
+      title: "",
+      username:"",
+      password:"",
+      email: ""
     },
     methods:{
       listBlogs(){
@@ -200,6 +213,29 @@
         })
         .catch(err=>{
           console.log(err);
+        })
+      },
+      login(){
+        var that = this;
+        axios.post(`http://localhost:3000/users/login`,{
+          username: that.username,
+          password: that.password
+        })
+      .then(response=>{
+          localStorage.setItem('token',response.data)
+          location.reload()
+        })  
+      },
+      signup(){
+        var ono = this;
+        axios.post(`http://localhost:3000/users/signup`,{
+          username: ono.username,
+          password: ono.password,
+          email: ono.email
+        })
+        .then(response=>{
+          alert(`${ono.username} Registered!`)
+          location.reload()
         })
       }
     },
