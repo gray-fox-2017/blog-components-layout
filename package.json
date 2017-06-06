@@ -1,0 +1,36 @@
+{
+  "name": "blog-components-layout",
+  "version": "1.0.0",
+  "description": "Mocha with component",
+  "main": "index.html",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raynormw/blog-components-layout.git"
+  },
+  "keywords": [
+    "mocha",
+    "vue_component",
+    "hacktiv8"
+  ],
+  "author": "raynormw",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raynormw/blog-components-layout/issues"
+  },
+  "homepage": "https://github.com/raynormw/blog-components-layout#readme",
+  "dependencies": {
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.17.2",
+    "chai": "^4.0.2",
+    "chai-http": "^3.0.0",
+    "cors": "^2.8.3",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.3",
+    "jsonwebtoken": "^7.4.1",
+    "mocha": "^3.4.2",
+    "mongoose": "^4.10.4"
+  }
+}
