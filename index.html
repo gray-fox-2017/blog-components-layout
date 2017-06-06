@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>TDD</title>
+    <link href="css/style.css" rel='stylesheet' type='text/css' />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/responsive-nav.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <nav class="navbar navbar-inverse sidebar" role="navigation">
+    <div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#">TDD Blog</a>
+		</div>
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="#">Home<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home"></span></a></li>
+        <li><a href="#" v-if="localStorage.getItem('token') === null" data-toggle="modal" data-target="#login-modal">Login<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-share-send"></span></a></li>
+        <li ><a href="#" vi-if="localStorage.getItem('token') !== null">Logout<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-remove"></span></a></li>
+				<li ><a href="#">Profile<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li>
+				<!-- <li ><a href="#">Messages<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-envelope"></span></a></li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>
+					<ul class="dropdown-menu forAnimate" role="menu">
+						<li><a href="#">Action</a></li>
+						<li><a href="#">Another action</a></li>
+						<li><a href="#">Something else here</a></li>
+						<li class="divider"></li>
+						<li><a href="#">Separated link</a></li>
+						<li class="divider"></li>
+						<li><a href="#">One more separated link</a></li>
+					</ul>
+				</li>
+				<li><a href="#">Home<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home"></span></a></li>
+				<li ><a href="#">Profile<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li> -->
+				<li><a href="#" v-on:click="startWrite()">Write Blog<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Blogs <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-book"></span></a>
+					<ul class="dropdown-menu forAnimate" role="menu" v-for="(blog,index) in blogs">
+						<li><a href="#" v-on:click="readBlog(blog._id)">{{blog.title}}</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>
+<!-- modal -->
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    	  <div class="modal-dialog">
+				<div class="loginmodal-container">
+					<h1>Login to Your Account</h1><br>
+				  <form>
+					<input type="text" name="user" placeholder="Username">
+					<input type="password" name="pass" placeholder="Password">
+					<input type="submit" name="login" class="login loginmodal-submit" value="Login">
+				  </form>
+					
+				  <div class="login-help">
+					<a href="#">Register</a>
+				  </div>
+				</div>
+			</div>
+		  </div>
+      <!-- end of modal -->
+      <div id="blog">
+        <simple-counter :blogs='title'></simple-counter>
+        <simple-counter :blogs='blog'></simple-counter>
+      </div>
+      <div class ='write' v-if="localStorage.getItem('write') !== null">
+        <form>
+          <h3>Title</h3>
+          <input type="text" v-model='title'>
+          <h3>Blog</h3>
+          <textarea v-model='blog' rows="4" cols="50"> </textarea>
+          <br><br><br>
+          <button type="button" v-on:click="cancelWrite()">Cancel</button>
+          <button type="button" v-on:click="createBlog()">Submit</button>
+        </form>      
+      </div>
+    </div>
+    <script type="text/javascript">
+    $(window).on('load',function(){
+        $('#login-modal').modal('show');
+    });
+    </script>
+    <script type="text/javascript">
+    function htmlbodyHeightUpdate(){
+      var height3 = $( window ).height()
+      var height1 = $('.nav').height()+50
+      height2 = $('.main').height()
+      if(height2 > height3){
+      $('html').height(Math.max(height1,height3,height2)+10);
+      $('body').height(Math.max(height1,height3,height2)+10);
+      }
+      else
+      {
+      $('html').height(Math.max(height1,height3,height2));
+      $('body').height(Math.max(height1,height3,height2));
+      }
+
+      }
+      $(document).ready(function () {
+      htmlbodyHeightUpdate()
+      $( window ).resize(function() {
+      htmlbodyHeightUpdate()
+      });
+      $( window ).scroll(function() {
+      height2 = $('.main').height()
+        htmlbodyHeightUpdate()
+      });
+      });
+    </script>
+    <script type="text/javascript">
+  Vue.component('simple-counter', {
+    props: ['blogs'],
+    template: '<h1>{{blogs}}</h1>',
+    // data is technically a function, so Vue won't
+    // complain, but we return the same object
+    // reference for each component instance
+    // data: function () {
+    //   return data
+    // }
+  })
+  new Vue({
+    el: '#app',
+    data:{
+      blogs: [],
+      blog: "",
+      title: ""
+    },
+    methods:{
+      listBlogs(){
+        var self = this;
+        axios.get(`http://localhost:3000/blog`)
+        .then(response=>{
+          self.blogs = response.data
+        })
+        .catch(err=>{
+          console.log(err);
+        })
+      },
+      createBlog(){
+      var ini = this;
+        axios.post(`http://localhost:3000/blog`,{
+         title: ini.title,
+         blog: ini.blog
+        })
+        .then(response=>{
+          console.log(response.data);
+          ini.blogs.push(response.data)
+          localStorage.removeItem('write')
+        })
+        .catch(err=>{
+          console.log(err);
+        })
+      },
+      deleteBlog(id){
+        axios.delete(`http://localhost:3000/${id}`)
+        .then(response=>{
+          
+        })
+        .catch(err=>{
+          console.log(err);
+        })
+      },
+      startWrite(){
+        if(localStorage.getItem('token') == null){
+          alert('Please Login to write a blog!')
+        }
+        else{
+          localStorage.setItem('write','true')
+          location.reload()
+        }    
+      },
+      cancelWrite(){
+        localStorage.removeItem('write')
+      },
+      readBlog(id){
+        var itu = this;
+        axios.get(`http://localhost:3000/blog/${id}`)
+        .then(response=>{
+          itu.title = response.data.title
+          itu.blog = response.data.blog
+        })
+        .catch(err=>{
+          console.log(err);
+        })
+      }
+    },
+    created: function(){
+      this.listBlogs()
+    }
+  })
+    </script>
+  </body>
+</html>
