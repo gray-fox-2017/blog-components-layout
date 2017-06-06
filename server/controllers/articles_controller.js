@@ -28,6 +28,7 @@ function getSingle(req, res) {
 function createArticle(req, res) {
   Articles.create({
     author:  req.body.author,
+    author_name: req.body.author_name,
     title : req.body.title,
     content : req.body.content,
     category : req.body.category,
@@ -55,6 +56,7 @@ function updateArticle(req, res) {
     }, {
       $set: {
         author:     req.body.author || user[0].author,
+        author_name:req.body.author_name || user[0].author_name,
         title :     req.body.title || user[0].title,
         content :   req.body.content || user[0].content,
         category :  req.body.category || user[0].category,

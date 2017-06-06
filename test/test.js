@@ -17,6 +17,7 @@ describe('post new article', function () {
     .post('/articles')
     .send({
       author: author_id,
+      author_name: 'Tirta',
       title : 'Hello World!',
       content : 'Lorem Ipsum Dolor Sit Amet',
       category : 'test',
@@ -24,6 +25,7 @@ describe('post new article', function () {
     })
     .end(function (err,res) {
       res.body.msg.should.equal('Add article Success..');
+      res.body.data.author_name.should.equal('Tirta');
       res.body.data.title.should.equal('Hello World!');
       res.body.data.content.should.equal('Lorem Ipsum Dolor Sit Amet');
       res.body.data.category.should.equal('test');

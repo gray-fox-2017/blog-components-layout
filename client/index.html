@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="author" content="Tirta Wirya Putra">
+    <meta name="description" content="Ghosty Blogging">
+    <title>Ghosty Blogging</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/style.css">
+  </head>
+<body>
+  <script type="text/x-template" id="side-bar">
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" @click="close">&times;</a>
+      <title-list v-for="blog in blogs" :key="blog._id" :blog="blog" :selectBlog="select"></title-list>
+    </div>
+  </script>
+  <script type="text/x-template" id="title-list">
+      <a @click="selectBlog(blog)">{{blog.title}}</a>
+  </script>
+  <div class= "title-header">
+    <h1>Welcome to Ghosty Blogging (Go-Blog)</h1>
+  </div>
+  <script type="text/x-template" id="article-component">
+    <div>
+      <h1>{{blog.title}}</h1>
+      <hr>
+      <p>{{blog.content}}</p>
+      <p class="posted">Posted by: <span>{{blog.author_name}}</span></p>
+    </div>
+  </script>
+  <div id="app">
+    <side-bar :blogs="blogs" :close="closeNav" :select="selectBlog"></side-bar>
+    <span @click="openNav()" style="font-size:30px;cursor:pointer">&#9776;</span>
+    <div class="container">
+
+      <article-component :blog="selectedBlog"></article-component>
+    </div>
+  </div>
+  <footer class="footer">
+    <p>Made with
+      <i class="fa fa-heart fa-lg"></i> by
+      <a href="http://tirtawiryaputra.com" target="_blank">TWP</a>
+    </p>
+  </footer>
+</body>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vue"></script>
+<script>
+  Vue.component('title-list', {
+    props: ['title', 'selectBlog', 'blog'],
+    template: '#title-list'
+  })
+  Vue.component('side-bar', {
+    props: ['blogs', 'close', 'select'],
+    template: '#side-bar'
+  })
+  Vue.component('article-component', {
+    props: ['blog'],
+    template: '#article-component'
+  })
+  var app = new Vue({
+    el: '#app',
+    data: {
+      blogs: [],
+      selectedBlog: {}
+    },
+    methods: {
+      openNav: function(){
+        document.getElementById("mySidenav").style.width = "250px";
+        document.getElementById("app").style.marginLeft = "250px";
+      },
+      closeNav: function(){
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("app").style.marginLeft = "0";
+      },
+      selectBlog: function(obj){
+        console.log('test')
+        this.selectedBlog = obj
+        console.log(this.selectedBlog)
+      }
+    },
+    created: function() {
+      axios.get('http://localhost:3000/articles').then((response)=>{
+        this.blogs = response.data
+        console.log(JSON.stringify(this.blogs))
+      }).catch(function (error) {
+        console.log(error);
+      })
+    }
+  })
+</script>
+
+</html>

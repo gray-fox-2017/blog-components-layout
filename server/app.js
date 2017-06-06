@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const index = require('./routes/index');
 const users = require('./routes/users');
 const articles = require('./routes/articles');
@@ -13,6 +14,7 @@ db.once('open', function() {
   console.log("we're connected!");
 });
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', index);
