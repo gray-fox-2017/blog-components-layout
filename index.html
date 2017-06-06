@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Blog Layout Component</title>
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.css">
+</head>
+<body>
+<div id="app">
+	<navbar></navbar>
+	<div class="ui container" style="margin-top:55px;">
+		<div class="ui grid">
+		  <div class="three wide column">
+		  	<div class="ui fluid vertical menu">
+				  <div class="item">
+				    <div class="header">Artikel</div>
+				    <div class="menu">
+	      			<list-article 
+	      				v-for="list in lists" v-bind:contents="list"
+	      				v-bind:key="list._id" 
+	      				v-on:article-main="articleMain(list)">
+	      			</list-article>
+				    </div>
+				  </div>
+				</div>
+			</div>
+			<div class="thirteen wide column">
+				<content-article 
+				v-bind:content="dataArticle">
+				</content-article>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script>
+Vue.component('navbar', {
+	template: `
+		<div class="ui top fixed menu">
+		<a class="item">Features</a>
+		<a class="item">Testimonials</a>
+		<a class="item">Sign-in</a>
+		</div>`
+})
+
+Vue.component('list-article', {
+	props : ['contents'],
+	template : `
+  	<a class="item" v-on:click="articleMain">{{contents.title}}</a>
+	`,
+	methods : {
+		articleMain : function(){
+			this.$emit('article-main')
+		}
+	}
+})
+
+Vue.component('content-article',{
+	template : `          
+	<div v-if="content.title" class="ui piled segment">
+    <h3 class="ui header">{{ content.title }}</h3>
+      <p>{{ content.content }}</p>
+    </div>
+  <div class="ui piled segment" v-else>
+  	<h3 v-else>Welcome </h3>
+  </div>`,
+	props : ['content']
+})
+
+new Vue({
+  el: '#app',
+  data : {
+	  	lists : [],
+	  	dataArticle : {}
+  },
+	methods : {
+		articleMain : function(list){
+		var self = this
+		this.dataArticle = list
+		}
+	},
+	created(){
+		var self = this
+		axios.get('http://localhost:3000/api/articles')
+		.then(response=>{
+			self.lists = response.data
+		})
+		.catch(err=>{
+			console.log(err)
+		})
+  }
+})
+</script>
+</html>
