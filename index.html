@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Vue Component</title>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="row">
+          <h1>Article</h1>
+          <div class="col m4">
+            <div class="collection">
+              <list-article v-for="article in articles" :title="article.title" :key="article._id" @selected-article="getCurrentArticle(article)"><list-article>
+            </div>
+          </div>
+          <div class="col m8" v-if="selectedArticle !== null">
+            <article-content :title="selectedArticle.title" :author="selectedArticle.author" :content="selectedArticle.content"></article-content>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <template id="article">
+      <a href="#!" class="collection-item" @click="contentArticle">{{title}}</a>
+    </template>
+
+    <template id="content">
+      <div>
+        <h5>{{title}}</h5>
+        <h6>{{author}}</h6>
+        <p>{{content}}</p>
+      </div>
+    </template>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+    <script type="text/javascript">
+      Vue.component('list-article', {
+        template: '#article',
+        props: ['title'],
+        methods: {
+          contentArticle: function(){
+            this.$emit('selected-article')
+          }
+        }
+      })
+
+      Vue.component('article-content', {
+        template: '#content',
+        props: ['content', 'author', 'title']
+      })
+
+      var app = new Vue({
+        el: '#app',
+        data: {
+          articles: [],
+          selectedArticle: null
+        },
+        methods: {
+          getArticle: function(){
+            var self = this;
+            axios.get("http://localhost:5000/api/articles/")
+            .then(articles => {
+              self.articles = articles.data
+              console.log(self.articles);
+            })
+          },
+          getCurrentArticle: function(article){
+            // console.log(JSON.stringify(article));
+            this.selectedArticle = article
+          }
+        },
+        created () {
+          this.getArticle()
+        }
+      })
+
+    </script>
+  </body>
+</html>
