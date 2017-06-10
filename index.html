@@ -47,6 +47,29 @@
     </div>
 
     <script type="text/javascript">
+      var app = new Vue({
+        el: "#app",
+        data: {
+          articles: [],
+          contents: {title: null, author: null, content: null}
+        },
+        methods: {
+          getArticles: function () {
+            axios.get(`http://localhost:3000/api/articles`)
+              .then ((response) => {
+                app.articles = response.data
+                app.contents = app.articles[0]
+              })
+          },
+          getArticle: function(article) {
+            app.contents = article
+          }
+        },
+        created () {
+          this.getArticles()
+        }
+      })
+
       Vue.component('article-list', {
         template: `<li><a href="#" v-on:click="getArticle"> {{ article.title }}</a></li>`,
         props: ['article'],
@@ -71,29 +94,6 @@
         </div>`,
         props: ['content']
       })
-
-      var app = new Vue({
-        el: "#app",
-        data: {
-          articles: [],
-          contents: {}
-        },
-        methods: {
-          getArticles: function () {
-            axios.get(`http://localhost:3000/api/articles`)
-              .then ((response) => {
-                app.articles = response.data
-              })
-          },
-          getArticle: function(article) {
-            app.contents = article
-          }
-        },
-        created () {
-          this.getArticles()
-        }
-      })
-
     </script>
 
   </body>
